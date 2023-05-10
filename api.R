@@ -1,0 +1,58 @@
+#* @apiTitle BALONCESTO
+#* @apiDescription En esta api podras obtener información acerca de los equipos de la NBA
+
+#* Equipos con mAs puntos y menos puntos marcados en casa en una determinada temporada
+#* @param temporada 
+#* @get /equipo
+
+function (temporada="") {
+  
+  equipo<- df%>%
+    filter(SEASON == temporada)%>%
+    group_by(HOME)%>%
+    summarise(total_puntos = (HOME_PTS))%>%
+    arrange(desc(total_puntos))
+  
+  equipo_mas<-equipo[1,1]
+  
+  puntos_casa_temp <- arrange(equipo, total_puntos)
+  
+  equipo_min <- puntos_casa_temp[1,1]
+  
+  list(paste0("En la temporada ", temporada, " el quipo con mas puntos en casa fue ", equipo_mas, " y el que consiguio menos fue ", equipo_min))
+}
+
+#* ¿Que equipo ha ganado mas partidos?
+#* @param temporada 
+#* @get /ganador
+
+function (temporada="") {
+  equipo<- df%>%
+    filter(SEASON == temporada)%>%
+    group_by(HOME)%>%
+    summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
+  
+  partidos$total<-partidos$partidos_casa + partidos$partidos_fuera
+  ordenado<-partidos%>%
+    arrange(desc(total))
+  ganador<-ordenado[1,1]
+  
+  paste0('En la temporada ', temporada, ' el equipo que más partidos ha ganado ha sido ', ganador )
+}
+
+#* ¿Que tempoarada gano mas partidos?
+#* @param equipo 
+#* @get /temporada
+
+function(equipo=''){
+  x<- df%>%
+    group_by(HOME,SEASON)%>%
+    summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
+  x$total<-partidos$partidos_casa + partidos$partidos_fuera
+  temporada<-x%>%
+    filter(HOME==equipo)%>%
+    arrange(desc(total))
+  temporada_ganador<-temporada[1,2]
+  paste0('Los ', equipo, ' en la temporada', temporada_ganador )
+  
+}
