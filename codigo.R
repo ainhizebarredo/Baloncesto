@@ -31,5 +31,26 @@ x("2018-19")
 
 #2.Introduciendo una temporada, Â¿quÃ© equipo ha ganado mÃ¡s partidos?
 
+partidos<-df%>%
+  group_by(HOME, SEASON)%>%
+  summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
+
+partidos$total<-partidos$partidos_casa + partidos$partidos_fuera
+
+u <- function (temporada="") {
+  equipo<- df%>%
+    filter(SEASON == temporada)%>%
+    group_by(HOME)%>%
+    summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
+  
+  partidos$total<-partidos$partidos_casa + partidos$partidos_fuera
+  ordenado<-partidos%>%
+    arrange(desc(total))
+  ganador<-ordenado[1,1]
+  
+  paste0('En la temporada ', temporada, ' el equipo que más partidos ha ganado ha sido ', ganador )
+}
+
+u("2018-19")
 
 #3.Con el nombre de un equipo, Â¿quÃ© tempoarada gano mÃ¡s partidos?
