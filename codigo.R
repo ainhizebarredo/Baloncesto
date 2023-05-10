@@ -31,12 +31,6 @@ x("2018-19")
 
 #2.Introduciendo una temporada, Â¿quÃ© equipo ha ganado mÃ¡s partidos?
 
-partidos<-df%>%
-  group_by(HOME, SEASON)%>%
-  summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
-
-partidos$total<-partidos$partidos_casa + partidos$partidos_fuera
-
 u <- function (temporada="") {
   equipo<- df%>%
     filter(SEASON == temporada)%>%
@@ -54,3 +48,17 @@ u <- function (temporada="") {
 u("2018-19")
 
 #3.Con el nombre de un equipo, Â¿quÃ© tempoarada gano mÃ¡s partidos?
+
+z<- function(equipo=''){
+  x<- df%>%
+    group_by(HOME,SEASON)%>%
+    summarise(partidos_casa=sum(W_HOME), partidos_fuera=sum(W_AWAY))
+  x$total<-partidos$partidos_casa + partidos$partidos_fuera
+  temporada<-x%>%
+    filter(HOME==equipo)%>%
+    arrange(desc(total))
+  temporada_ganador<-temporada[1,2]
+  paste0('Los ', equipo, ' en la temporada', temporada_ganador )
+  
+}
+z('76ers')
